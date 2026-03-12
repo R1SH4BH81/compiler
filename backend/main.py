@@ -1,8 +1,11 @@
 import os
 import sys
 
-# Add the current directory to sys.path for Vercel
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Get the directory of this file
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Add it to sys.path if not present
+if _BASE_DIR not in sys.path:
+    sys.path.insert(0, _BASE_DIR)
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
