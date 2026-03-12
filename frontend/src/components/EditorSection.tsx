@@ -1,7 +1,7 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
 import { Sparkles, Wand2, HelpCircle, Loader2 } from 'lucide-react';
-import { type Language, LANGUAGES } from '../types';
+import { type Language } from '../types';
 
 interface EditorSectionProps {
   selectedLang: Language;
