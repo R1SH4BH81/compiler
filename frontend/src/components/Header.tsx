@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Play, RotateCcw, History, Code2, Upload, 
+  Play, RotateCcw, History,  Upload, 
   Download, Copy, Check, RotateCw, LogIn
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
