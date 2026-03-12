@@ -7,9 +7,10 @@ _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if _BASE_DIR not in sys.path:
     sys.path.insert(0, _BASE_DIR)
 
-from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
+from fastapi import FastAPI, Depends, HTTPException, status, APIRouter, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security.utils import get_authorization_scheme_param
 from sqlmodel import Session, select
 from pydantic import BaseModel
 from typing import List, Optional
@@ -28,14 +29,14 @@ from auth_utils import verify_password, get_password_hash, create_access_token, 
 
 app = FastAPI(title="Compiler API")
 
-# Use a router with /api prefix for all endpoints
-api_router = APIRouter(prefix="/api")
+# Use a router for all endpoints
+api_router = APIRouter()
 
 @api_router.get("/")
 async def root():
     return {"message": "API is running"}
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token") # changed from /api/token to token (relative)
 
 app.add_middleware(
     CORSMiddleware,
@@ -64,6 +65,21 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
     if user is None:
         raise credentials_exception
     return user
+
+async def get_optional_current_user(request: Request, session: Session = Depends(get_session)):
+    authorization: str = request.headers.get("Authorization")
+    scheme, token = get_authorization_scheme_param(authorization)
+    if not authorization or scheme.lower() != "bearer":
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            return None
+        user = session.exec(select(User).where(User.email == email)).first()
+        return user
+    except JWTError:
+        return None
 
 @app.on_event("startup")
 def on_startup():
@@ -140,7 +156,7 @@ async def ai_assist(request: AIRequest, current_user: User = Depends(get_current
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/run", response_model=ExecutionHistory)
-async def run_code(submission: CodeSubmission, current_user: Optional[User] = Depends(get_current_user), session: Session = Depends(get_session)):
+async def run_code(submission: CodeSubmission, current_user: Optional[User] = Depends(get_optional_current_user), session: Session = Depends(get_session)):
     try:
         if submission.language == 'python':
             output = await compile_and_execute_python(submission.code, submission.input_data)
@@ -160,21 +176,26 @@ async def run_code(submission: CodeSubmission, current_user: Optional[User] = De
             language=submission.language,
             user_id=current_user.id if current_user else None
         )
-        session.add(execution_record)
-        session.commit()
-        session.refresh(execution_record)
+        if current_user:
+            session.add(execution_record)
+            session.commit()
+            session.refresh(execution_record)
         return execution_record
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/history", response_model=List[ExecutionHistory])
 async def get_history(current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
-    statement = select(ExecutionHistory).where(ExecutionHistory.user_id == current_user.id).order_by(ExecutionHistory.created_at.desc())
-    results = session.exec(statement).all()
-    return results
+    try:
+        statement = select(ExecutionHistory).where(ExecutionHistory.user_id == current_user.id).order_by(ExecutionHistory.created_at.desc())
+        results = session.exec(statement).all()
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-# Include the router in the app
+# Include the router in the app at both root and /api for compatibility
 app.include_router(api_router)
+app.include_router(api_router, prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn

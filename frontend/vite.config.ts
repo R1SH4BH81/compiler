@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     define: {
-      'import.meta.env.VITE_API_BASE_URL': JSON.stringify(mode === 'production' ? '/api' : 'http://localhost:8000')
+      'import.meta.env.VITE_API_BASE_URL': JSON.stringify(mode === 'production' ? '/api' : 'http://localhost:8000/api')
     }
   }
 })

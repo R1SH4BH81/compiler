@@ -78,6 +78,7 @@ const Compiler: React.FC = () => {
           <HistorySidebar 
             show={showHistory} 
             history={history} 
+            isLoggedIn={!!token}
             onClose={() => setShowHistory(false)} 
             onSelectRecord={selectHistoryRecord}
             onClearHistory={clearHistory}

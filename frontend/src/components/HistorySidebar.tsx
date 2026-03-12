@@ -5,6 +5,7 @@ import { type ExecutionRecord, type Language, LANGUAGES } from '../types';
 interface HistorySidebarProps {
   show: boolean;
   history: ExecutionRecord[];
+  isLoggedIn: boolean;
   onClose: () => void;
   onSelectRecord: (record: ExecutionRecord, lang: Language) => void;
   onClearHistory: () => void;
@@ -13,6 +14,7 @@ interface HistorySidebarProps {
 const HistorySidebar: React.FC<HistorySidebarProps> = ({ 
   show, 
   history, 
+  isLoggedIn,
   onClose, 
   onSelectRecord,
   onClearHistory
@@ -47,7 +49,21 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({
         </div>
       </div>
       <div className="overflow-y-auto h-[calc(100%-60px)] pb-20 scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
-        {history.length === 0 ? (
+        {!isLoggedIn ? (
+          <div className="flex flex-col items-center justify-center p-10 text-center">
+            <div className="p-3 rounded-full bg-slate-800/50 mb-4">
+              <History className="w-8 h-8 text-slate-700" />
+            </div>
+            <p className="text-slate-400 font-medium mb-2">History is disabled</p>
+            <p className="text-slate-600 text-sm mb-6">Login to save and view your execution history</p>
+            <a 
+              href="/auth" 
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-sm font-medium transition-colors"
+            >
+              Login Now
+            </a>
+          </div>
+        ) : history.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-10 text-center">
             <div className="p-3 rounded-full bg-slate-800/50 mb-4">
               <History className="w-8 h-8 text-slate-700" />
