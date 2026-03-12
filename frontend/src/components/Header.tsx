@@ -58,9 +58,9 @@ const Header: React.FC<HeaderProps> = ({
           src="/logo.png" 
           alt="8BIT Compiler Logo" 
           className="w-10 h-10 rounded-lg cursor-pointer" 
-          onClick={() => navigate('/')} 
+          
         />
-        <h1 className="text-xl font-bold tracking-tight text-white cursor-pointer" onClick={() => navigate('/')}>
+        <h1 className="text-xl font-bold tracking-tight text-white cursor-pointer" >
           8BIT Compiler
         </h1>
       </div>
