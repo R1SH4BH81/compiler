@@ -54,9 +54,12 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md">
       <div className="flex items-center gap-2">
-        <div className="p-2 bg-indigo-500 rounded-lg">
-          <Code2 className="w-6 h-6 text-white" />
-        </div>
+        <img 
+          src="/logo.png" 
+          alt="8BIT Compiler Logo" 
+          className="w-10 h-10 rounded-lg cursor-pointer" 
+          onClick={() => navigate('/')} 
+        />
         <h1 className="text-xl font-bold tracking-tight text-white cursor-pointer" onClick={() => navigate('/')}>
           8BIT Compiler
         </h1>
