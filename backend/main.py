@@ -7,7 +7,7 @@ _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if _BASE_DIR not in sys.path:
     sys.path.insert(0, _BASE_DIR)
 
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlmodel import Session, select
@@ -28,7 +28,14 @@ from auth_utils import verify_password, get_password_hash, create_access_token, 
 
 app = FastAPI(title="Compiler API")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+# Use a router with /api prefix for all endpoints
+api_router = APIRouter(prefix="/api")
+
+@api_router.get("/")
+async def root():
+    return {"message": "API is running"}
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 
 app.add_middleware(
     CORSMiddleware,
@@ -63,7 +70,7 @@ def on_startup():
     init_db()
 
 # Auth Endpoints
-@app.post("/register", response_model=UserResponse)
+@api_router.post("/register", response_model=UserResponse)
 async def register(user_data: UserCreate, session: Session = Depends(get_session)):
     existing_user = session.exec(select(User).where(User.email == user_data.email)).first()
     if existing_user:
@@ -81,7 +88,7 @@ async def register(user_data: UserCreate, session: Session = Depends(get_session
         created_at=new_user.created_at
     )
 
-@app.post("/token", response_model=Token)
+@api_router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
     user = session.exec(select(User).where(User.email == form_data.username)).first()
     if not user or not verify_password(form_data.password, user.hashed_password):
@@ -94,7 +101,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/me", response_model=UserResponse)
+@api_router.get("/me", response_model=UserResponse)
 async def read_users_me(current_user: User = Depends(get_current_user)):
     return UserResponse(
         id=current_user.id,
@@ -103,7 +110,7 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
         created_at=current_user.created_at
     )
 
-@app.post("/update-api-key")
+@api_router.post("/update-api-key")
 async def update_api_key(key_data: APIKeyUpdate, current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
     current_user.gemini_api_key = key_data.gemini_api_key
     session.add(current_user)
@@ -116,7 +123,7 @@ class AIRequest(BaseModel):
     language: str
     prompt_type: str = "complete"
 
-@app.post("/ai/assist")
+@api_router.post("/ai/assist")
 async def ai_assist(request: AIRequest, current_user: User = Depends(get_current_user)):
     if not current_user.gemini_api_key:
         raise HTTPException(status_code=400, detail="Gemini API Key not configured in profile")
@@ -132,7 +139,7 @@ async def ai_assist(request: AIRequest, current_user: User = Depends(get_current
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/run", response_model=ExecutionHistory)
+@api_router.post("/run", response_model=ExecutionHistory)
 async def run_code(submission: CodeSubmission, current_user: Optional[User] = Depends(get_current_user), session: Session = Depends(get_session)):
     try:
         if submission.language == 'python':
@@ -160,11 +167,14 @@ async def run_code(submission: CodeSubmission, current_user: Optional[User] = De
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/history", response_model=List[ExecutionHistory])
+@api_router.get("/history", response_model=List[ExecutionHistory])
 async def get_history(current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
     statement = select(ExecutionHistory).where(ExecutionHistory.user_id == current_user.id).order_by(ExecutionHistory.created_at.desc())
     results = session.exec(statement).all()
     return results
+
+# Include the router in the app
+app.include_router(api_router)
 
 if __name__ == "__main__":
     import uvicorn
