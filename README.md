@@ -42,41 +42,54 @@ Login/SignUp Page
 ## Structure
 ```
 .
-├── static
-│   ├── css
-│   │   ├── bootstrap.min.css
-│   │   └── styles.css
-│   ├── img
-│   └── script
-│       ├── animate.js
-│       ├── bootstrap.min.js
-│       ├── bs-init.js
-│       ├── c.js
-│       ├── c++.js
-│       ├── fire.js
-│       ├── firebase.js
-│       ├── java.js
-│       ├── python.js
-│       ├── script.js
-│       ├── script2.js
-│       ├── script3.js
-│       ├── script4.js
-│       ├── script5.js
-│       └── session.js
-├── templates
-│   ├── 404.html
-│   ├── admin.html
-│   ├── c.html
-│   ├── cpp.html
-│   ├── index.html
-│   ├── java.html
-│   ├── login.html
-│   ├── restricted.html
-│   ├── signup.html
-│   └── star.html
-├── app.py
-└── h.txt
+├── backend/            # FastAPI Backend
+│   ├── main.py        # Entry point
+│   ├── database.py    # Database connection
+│   ├── models.py      # SQLModel models
+│   └── requirements.txt
+├── frontend/           # React + Vite + Tailwind
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.ts
+└── vercel.json         # Vercel deployment configuration
+```
 
+## Deployment on Vercel
+
+To deploy this project on Vercel, follow these steps:
+
+### 1. Configure Environment Variables
+In your Vercel project settings, add the following environment variables:
+
+**Backend:**
+- `DATABASE_URL`: Your PostgreSQL connection string (e.g., from Neon, Supabase, or AWS RDS).
+- `SECRET_KEY`: A random string for JWT authentication.
+- `JDOODLE_CLIENT_ID`: Your JDoodle API Client ID.
+- `JDOODLE_CLIENT_SECRET`: Your JDoodle API Client Secret.
+
+**Frontend:**
+- `VITE_API_BASE_URL`: Set this to `/api` for production (since we use a rewrite in `vercel.json`).
+
+### 2. Deploy
+1. Push your code to a GitHub repository.
+2. Connect your repository to Vercel.
+3. Vercel will automatically detect the `vercel.json` configuration and deploy both the frontend and backend.
+
+### 3. Local Setup
+To run the project locally:
+
+**Backend:**
+```bash
+cd backend
+pip install -r requirements.txt
+python -m uvicorn main:app --reload
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ## Technologies Used
