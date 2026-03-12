@@ -68,7 +68,7 @@ const Compiler: React.FC = () => {
         />
       )}
 
-      <main className="flex flex-1 overflow-hidden">
+      <main className="flex flex-2 overflow-hidden">
         <Sidebar 
           selectedLang={selectedLang} 
           onSelectLanguage={setSelectedLang} 
@@ -114,7 +114,7 @@ const Compiler: React.FC = () => {
             {/* Terminal Area */}
             <div 
               className={`transition-all duration-300 ease-in-out overflow-hidden flex flex-col ${
-                showTerminal ? 'h-[300px] opacity-100' : 'h-0 opacity-0 pointer-events-none'
+                showTerminal ? 'h-[173px] opacity-100' : 'h-0 opacity-0 pointer-events-none'
               }`}
             >
               <div className="flex-1 min-h-0">

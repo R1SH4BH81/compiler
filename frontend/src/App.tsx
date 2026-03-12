@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Lenis from 'lenis';
 import Compiler from './components/Compiler';
 import Auth from './components/Auth';
 import Profile from './components/Profile';
@@ -21,6 +22,18 @@ const AppRoutes: React.FC = () => {
 
   useEffect(() => {
     initialize();
+
+    // Initialize Lenis
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      autoRaf: true,
+    });
+
+    return () => {
+      lenis.destroy();
+    };
   }, [initialize]);
 
   return (

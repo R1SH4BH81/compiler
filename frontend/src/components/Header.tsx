@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Play, RotateCcw, History, Code2, Upload, 
-  Download, Copy, Check, RotateCw, User, LogOut, LogIn
+  Download, Copy, Check, RotateCw, LogIn
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 
@@ -29,9 +29,8 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [copied, setCopied] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
   
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
 
   const handleUploadClick = () => {
@@ -117,7 +116,7 @@ const Header: React.FC<HeaderProps> = ({
 
         <div className="relative">
           <button
-            onClick={() => user ? setShowUserMenu(!showUserMenu) : navigate('/auth')}
+            onClick={() => navigate(user ? '/profile' : '/auth')}
             className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-colors rounded-md hover:bg-slate-800 ${
               user ? 'text-slate-200' : 'text-indigo-400'
             }`}
@@ -132,37 +131,10 @@ const Header: React.FC<HeaderProps> = ({
             ) : (
               <>
                 <LogIn className="w-4 h-4" />
-                Sign In / Sign Up
+                Sign In 
               </>
             )}
           </button>
-
-          {showUserMenu && user && (
-            <div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in duration-150">
-              <button
-                onClick={() => {
-                  navigate('/profile');
-                  setShowUserMenu(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
-              >
-                <User className="w-4 h-4" />
-                View Profile
-              </button>
-              <div className="h-px bg-slate-800 my-1" />
-              <button
-                onClick={() => {
-                  logout();
-                  setShowUserMenu(false);
-                  navigate('/auth');
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign Out
-              </button>
-            </div>
-          )}
         </div>
 
         <div className="h-6 w-px bg-slate-800" />

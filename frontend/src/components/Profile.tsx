@@ -39,7 +39,7 @@ const Profile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto pb-8">
         <button 
           onClick={() => navigate('/')}
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8 group"
@@ -99,6 +99,16 @@ const Profile: React.FC = () => {
                 <p className="text-sm text-slate-400 mb-6 leading-relaxed">
                   Bring your own Google Gemini API key to enable AI features like AUTOFILL, FIX, and EXPLAIN. 
                   Your key is stored securely and used only for your requests.
+                  <span className="block mt-2">
+                    Don't have a key? <a 
+                      href="https://aistudio.google.com/app/apikey" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-indigo-400 hover:text-indigo-300 transition-colors underline decoration-indigo-500/30 underline-offset-4"
+                    >
+                      Get one from here 
+                    </a>
+                  </span>
                 </p>
 
                 <form onSubmit={handleUpdateKey} className="space-y-4">

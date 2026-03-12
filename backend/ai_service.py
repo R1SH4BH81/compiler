@@ -1,5 +1,5 @@
 import os
-import google.generativeai as genai
+from google import genai
 from typing import Optional
 from dotenv import load_dotenv
 
@@ -14,9 +14,8 @@ async def get_ai_assistance(code: str, language: str, api_key: str, prompt_type:
         return "Error: Gemini API key not provided. Please add your API key in your profile."
 
     try:
-        # Create a new model instance with the user's API key
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        # Create a new client with the user's API key
+        client = genai.Client(api_key=api_key)
         
         prompts = {
             "complete": f"Continue the following {language} code. Provide ONLY the additional code, no explanations or markdown backticks:\n\n{code}",
@@ -25,7 +24,10 @@ async def get_ai_assistance(code: str, language: str, api_key: str, prompt_type:
         }
 
         prompt = prompts.get(prompt_type, prompts["complete"])
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=prompt
+        )
         text = response.text.strip()
         
         if text.startswith("```"):
