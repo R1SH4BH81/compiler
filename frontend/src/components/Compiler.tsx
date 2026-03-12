@@ -4,7 +4,9 @@ import HistorySidebar from './HistorySidebar';
 import EditorSection from './EditorSection';
 import TerminalSection from './TerminalSection';
 import Header from './Header';
-import { useCompiler } from '../hooks/useCompiler';
+import Modal from './Modal';
+import { useCompilerStore } from '../store/useCompilerStore';
+import { useAuthStore } from '../store/useAuthStore';
 
 const Compiler: React.FC = () => {
   const {
@@ -16,19 +18,33 @@ const Compiler: React.FC = () => {
     setInputData,
     output,
     loading,
+    aiLoading,
     history,
     showHistory,
     setShowHistory,
     runCode,
+    getAIAssistance,
     fetchHistory,
     selectHistoryRecord,
-  } = useCompiler();
+    handleFileUpload,
+    handleDownload,
+    handleCopy,
+    resetCode,
+    clearOutput,
+    clearHistory,
+    error,
+    setError,
+  } = useCompilerStore();
 
+  const { token } = useAuthStore();
   const [showTerminal, setShowTerminal] = useState(true);
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    if (token) {
+      fetchHistory();
+    }
+  }, [token, fetchHistory]);
+
 
   return (
     <div className="flex flex-col h-screen bg-slate-950 text-slate-200 overflow-hidden">
@@ -37,7 +53,20 @@ const Compiler: React.FC = () => {
         onRun={runCode} 
         onToggleHistory={() => setShowHistory(!showHistory)}
         showHistory={showHistory}
+        onUpload={handleFileUpload}
+        onDownload={handleDownload}
+        onCopy={handleCopy}
+        onReset={resetCode}
       />
+      
+      {error && (
+        <Modal 
+          show={!!error} 
+          onClose={() => setError(null)} 
+          title={error.title} 
+          message={error.message} 
+        />
+      )}
 
       <main className="flex flex-1 overflow-hidden">
         <Sidebar 
@@ -51,6 +80,7 @@ const Compiler: React.FC = () => {
             history={history} 
             onClose={() => setShowHistory(false)} 
             onSelectRecord={selectHistoryRecord}
+            onClearHistory={clearHistory}
           />
 
           <div className="flex-1 grid grid-rows-[1fr_auto_auto] min-h-0 overflow-hidden">
@@ -60,6 +90,8 @@ const Compiler: React.FC = () => {
                 selectedLang={selectedLang} 
                 code={code} 
                 onChange={setCode} 
+                onAIAssist={getAIAssistance}
+                aiLoading={aiLoading}
               />
             </div>
 
@@ -90,6 +122,7 @@ const Compiler: React.FC = () => {
                   inputData={inputData} 
                   onInputChange={setInputData} 
                   output={output} 
+                  onClearOutput={clearOutput}
                 />
               </div>
             </div>

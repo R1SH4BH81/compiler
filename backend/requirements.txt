@@ -4,7 +4,10 @@ sqlmodel==0.0.14
 psycopg2-binary==2.9.9
 pydantic==2.5.2
 pydantic-settings==2.1.0
-python-multipart==0.0.6
 sqlalchemy==2.0.23
 httpx==0.25.1
 python-dotenv==1.0.0
+google-generativeai==0.3.1
+passlib[recommended]==1.7.4
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.6
