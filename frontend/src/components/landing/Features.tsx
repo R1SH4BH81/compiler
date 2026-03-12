@@ -26,7 +26,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, imageUrl 
         <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 mb-4 leading-tight">
           {title}
         </h3>
-        <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-[90%]">
+        <p className="text-slate-900 text-sm md:text-base leading-relaxed max-w-[90%]">
           {description}
         </p>
       </div>
@@ -54,8 +54,8 @@ const Features: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
+    <section className="py-34 ">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
           {features.map((feature, index) => (
             <FeatureCard 
