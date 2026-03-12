@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Lenis from 'lenis';
 import Compiler from './components/Compiler';
+import LandingPage from './components/LandingPage';
 import Auth from './components/Auth';
 import Profile from './components/Profile';
 import { useAuthStore } from './store/useAuthStore';
@@ -38,8 +39,9 @@ const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/compiler" element={<Compiler />} />
       <Route path="/auth" element={<Auth />} />
-      <Route path="/" element={<Compiler />} />
       <Route 
         path="/profile" 
         element={

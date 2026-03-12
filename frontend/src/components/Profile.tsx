@@ -41,7 +41,7 @@ const Profile: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
       <div className="max-w-2xl mx-auto pb-8">
         <button 
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/compiler')}
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8 group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

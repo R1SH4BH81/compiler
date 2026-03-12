@@ -29,7 +29,7 @@ const Auth: React.FC = () => {
         
         const response = await axios.post(`${API_BASE_URL}/token`, params);
         login(response.data.access_token);
-        navigate('/');
+        navigate('/compiler');
       } else {
         // Register the user
         await axios.post(`${API_BASE_URL}/register`, { email, password });
@@ -41,7 +41,7 @@ const Auth: React.FC = () => {
         
         const response = await axios.post(`${API_BASE_URL}/token`, params);
         login(response.data.access_token);
-        navigate('/');
+        navigate('/compiler');
       }
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Something went wrong');
