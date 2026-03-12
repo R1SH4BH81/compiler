@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Star, PlayCircle, Users } from 'lucide-react';
+import { ArrowRight, Star, PlayCircle } from 'lucide-react';
 
 const FeaturesShowcase: React.FC = () => {
   return (
